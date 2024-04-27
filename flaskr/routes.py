@@ -162,6 +162,13 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', image_file=image_file, form=form)
 
+@app.route("/reset_password", methods=['POST', 'GET'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form =  RequestResetForm()
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
 @app.route("/logout")
 def logout():
     logout_user()
