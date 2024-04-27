@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST" action="" class="row g-3">
+    {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4"> Reset password </legend>
+        <div class="col-form-label"> 
+            {{ form.password.label(class="col-form-label") }}
+            {% if form.password.errors %}
+                {{ form.password(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                        <span> {{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.password(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-form-label"> 
+            {{ form.confirm_password.label(class="col-form-label") }}
+            {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.confirm_password.errors %}
+                        <span> {{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.confirm_password(class="form-control") }}
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="col-12">
+      {{ form.submit(class="btn btn-outline-primary") }}
+    </div>
+  </form>
+  <br>
+{% endblock content %}
