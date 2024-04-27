@@ -2,7 +2,7 @@ import json
 from flaskr.models import User, Report
 from flaskr import app, db
 from flask import render_template, url_for, redirect, flash
-from flaskr.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flaskr.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from flaskr import bcrypt
 from flask import request
 from flask_login import login_user, current_user, logout_user, login_required
