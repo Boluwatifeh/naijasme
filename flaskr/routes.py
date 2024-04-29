@@ -13,9 +13,9 @@ COAL = 43.03576
 DOMESTIC_FLIGHT = 0.24587
 INTERNATIONAL_FLIGHT = 0.18362
 
-fuel_coefficients = {
-    'petrol': 2.34,  # Default coefficient for petrol
-    'diesel': 2.70  # Coefficient for diesel
+fuel_emmmision_factors = {
+    'petrol': 2.34,  # Default emission factor for petrol
+    'diesel': 2.70  # Default emission factor for diesel
 }
 
 @app.route("/")
@@ -77,66 +77,66 @@ def calculate():
         motor_vehicle = float(request.form['motor_vehicle'])
         fuel_type = request.form['fuelType']
         fuel_price = float(request.form['motor_price'])
-        fuel_type_coefficient = fuel_coefficients.get(fuel_type, 1)  # Get the coefficient based on fuel type
+        fuel_type_emission_factor = fuel_emmmision_factors.get(fuel_type, 1)  # Get the emission-factor based on fuel type
         
         motorbike = float(request.form['motorbike'])
         fuel_type2 = request.form['fuelType2']
         motorbike_price = float(request.form['motorbike_price'])
-        fuel_type_coefficient2 = fuel_coefficients.get(fuel_type2, 1)
+        fuel_type_emission_factor2 = fuel_emmmision_factors.get(fuel_type2, 1)
         
         tricycle = float(request.form['tricycle'])
         fuel_type3 = request.form['fuelType3']
         tricycle_price = float(request.form['tricycle_price'])
-        fuel_type_coefficient3 = fuel_coefficients.get(fuel_type3, 1)
+        fuel_type_emission_factor3 = fuel_emmmision_factors.get(fuel_type3, 1)
 
         flight_domestic = float(request.form['flight_domestic'])
         flight_domestic_price = float(request.form['flight_domestic_price'])
-        domestic_flight_coefficient = flight_domestic * DOMESTIC_FLIGHT
+        domestic_flight_emission_factor = flight_domestic * DOMESTIC_FLIGHT
 
         flight_international = float(request.form['flight_international'])
         flight_international_price = float(request.form['flight_international_price'])
-        inter_flight_coefficient = flight_international * INTERNATIONAL_FLIGHT
+        inter_flight_emission_factor = flight_international * INTERNATIONAL_FLIGHT
 
         electricity = float(request.form['electricity'])
         electricity_price = float(request.form['electricity_price'])
-        electricity_coefficient = electricity * ELECTRICITY
+        electricity_emission_factor = electricity * ELECTRICITY
 
         generator = float(request.form['generator'])
         fuel_type4 = request.form['fuelType4']
         generator_price = float(request.form['generator_price'])
-        fuel_type_coefficient4 = fuel_coefficients.get(fuel_type4, 1)
+        fuel_type_emission_factor4 = fuel_emmmision_factors.get(fuel_type4, 1)
 
         lpg = float(request.form['lpg'])
         lpg_price = float(request.form['lpg_price'])
-        lpg_coefficient = lpg * LPG
+        lpg_emission_factor = lpg * LPG
 
         coal = float(request.form['coal'])
         coal_price = float(request.form['coal_price'])
-        coal_coefficient = coal * COAL
+        coal_emission_factor = coal * COAL
         
-        # Process data for each vehicle type, multiplying by the coefficient
-        motor_vehicle_coefficient = motor_vehicle * fuel_type_coefficient
-        motorbike_coefficient = motorbike * fuel_type_coefficient2 
-        tricycle_coefficient = tricycle * fuel_type_coefficient3 
-        generator_coefficient = generator * fuel_type_coefficient4
+        # Process data for each vehicle type, multiplying by the emission factor
+        motor_vehicle_emission_factor = motor_vehicle * fuel_type_emission_factor
+        motorbike_emission_factor = motorbike * fuel_type_emission_factor2 
+        tricycle_emission_factor = tricycle * fuel_type_emission_factor3 
+        generator_emission_factor = generator * fuel_type_emission_factor4
         
         # Calculate total cost
         total_cost = fuel_price + motorbike_price + tricycle_price + flight_domestic_price + flight_international_price + electricity_price + generator_price + lpg_price + coal_price
 
-         # Calculate total coefficient
-        total_coefficient = (motor_vehicle_coefficient + motorbike_coefficient + tricycle_coefficient + domestic_flight_coefficient + inter_flight_coefficient + electricity_coefficient + generator_coefficient + lpg_coefficient + coal_coefficient) / 1000
-        sum_of_coefficient = [int(motor_vehicle_coefficient + motorbike_coefficient + tricycle_coefficient + domestic_flight_coefficient + inter_flight_coefficient), int(electricity_coefficient + generator_coefficient + lpg_coefficient + coal_coefficient)]
-        list_of_coefficient = [motor_vehicle_coefficient, motorbike_coefficient, tricycle_coefficient, domestic_flight_coefficient, inter_flight_coefficient, electricity_coefficient, generator_coefficient, lpg_coefficient, coal_coefficient]
+         # Calculate total emission factor
+        total_coefficient = (motor_vehicle_emission_factor + motorbike_emission_factor + tricycle_emission_factor + domestic_flight_emission_factor + inter_flight_emission_factor + electricity_emission_factor + generator_emission_factor + lpg_emission_factor + coal_emission_factor) / 1000
+        sum_of_coefficient = [int(motor_vehicle_emission_factor + motorbike_emission_factor + tricycle_emission_factor + domestic_flight_emission_factor + inter_flight_emission_factor), int(electricity_emission_factor + lpg_emission_factor + coal_emission_factor)]
+        list_of_coefficient = [motor_vehicle_emission_factor, motorbike_emission_factor, tricycle_emission_factor, domestic_flight_emission_factor, inter_flight_emission_factor, electricity_emission_factor, generator_emission_factor, lpg_emission_factor, coal_emission_factor]
         return render_template('calculate.html', 
-                               motor_vehicle_coefficient=motor_vehicle_coefficient, 
-                               motorbike_coefficient=motorbike_coefficient, 
-                               tricycle_coefficient=tricycle_coefficient,
-                               domestic_flight_coefficient=domestic_flight_coefficient,
-                               inter_flight_coefficient=inter_flight_coefficient,
-                               electricity_coefficient=electricity_coefficient,
-                               generator_coefficient=generator_coefficient,
-                               lpg_coefficient=lpg_coefficient,
-                               coal_coefficient=coal_coefficient,
+                               motor_vehicle_emission_factor=motor_vehicle_emission_factor, 
+                               motorbike_emission_factor=motorbike_emission_factor, 
+                               tricycle_emission_factor=tricycle_emission_factor,
+                               domestic_flight_emission_factor=domestic_flight_emission_factor,
+                               inter_flight_emission_factor=inter_flight_emission_factor,
+                               electricity_emission_factor=electricity_emission_factor,
+                               generator_emission_factor=generator_emission_factor,
+                               lpg_emission_factor=lpg_emission_factor,
+                               coal_emission_factor=coal_emission_factor,
                                total_coefficient=total_coefficient,
                                total_cost=total_cost,
                                labels=json.dumps(labels), 
