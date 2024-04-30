@@ -1,0 +1,145 @@
+<div class="container">
+    <h1 class="text-center">Total Consumption Bar Chart</h1>
+    <canvas id="myChart"></canvas>
+  </div>
+
+  <div style="max-width: 600px; margin: auto;" class="container">
+    <h1 class="text-center">Total Consumption Pie Chart</h1>
+    <canvas id="myPieChart"></canvas>
+  </div>
+
+  <div style="max-width: 600px; margin: auto;" class="container">
+    <h1 class="text-center">Consumption Pie Chart</h1>
+    <canvas id="myPieChart2"></canvas>
+  </div>
+
+
+  <div class="container">
+    <h1>Total Footprint = {{ total_coefficient }} metric tons of CO2e </h1>
+    <p><strong> {{ motor_vehicle_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ motorbike_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ tricycle_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ domestic_flight_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ inter_flight_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ electricity_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ generator_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ lpg_coefficient }} metric tons: </strong></p>
+    <p><strong> {{ coal_coefficient }} metric tons:  </strong></p>
+    <p>Total amount spent is {{ total_cost }}</p>
+
+
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const labels = JSON.parse('{{ labels | safe }}');
+      const data = JSON.parse('{{ data | safe }}');
+
+      // Create bar chart
+      const ctx = document.getElementById('myChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Consumption',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)', // Blue color with transparency
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const pie_labels = JSON.parse('{{ labels | safe }}');
+      const pie_data = JSON.parse('{{ data | safe }}');
+
+      // Create pie chart
+      const ctx = document.getElementById('myPieChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: pie_labels,
+          datasets: [{
+            label: 'Total Consumption',
+            data: pie_data,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.5)', // Red color with transparency
+              'rgba(54, 162, 235, 0.5)', // Blue color with transparency
+              'rgba(255, 206, 86, 0.5)', // Yellow color with transparency
+              'rgba(75, 192, 192, 0.5)', // Green color with transparency
+              'rgba(153, 102, 255, 0.5)', // Purple color with transparency
+              'rgba(255, 159, 64, 0.5)', // Orange color with transparency
+              'rgba(255, 99, 132, 0.5)', // Red color with transparency (repeat to cover more colors)
+              'rgba(191, 63, 191, 0.6)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(191, 63, 191, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+ 
+    document.addEventListener('DOMContentLoaded', function () {
+      // const energy_label = JSON.parse('{{ coefficient_label | safe }}');
+      const coeff_data = JSON.parse('{{ sum_of_coefficient | safe }}');
+      console.log(coeff_data)
+      console.log('hi')
+
+      // Create pie chart
+      const ctx = document.getElementById('myPieChart2').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ["Transportation", "Energy"],
+          datasets: [{
+            label: 'Test Consumption',
+            data: coeff_data,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.5)', // Red color with transparency
+              'rgba(54, 162, 235, 0.5)', // Blue color with transparency
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+
+</script>

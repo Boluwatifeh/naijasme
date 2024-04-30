@@ -3,7 +3,7 @@ from flaskr.models import User, Report
 from flaskr import app, db, bcrypt, mail
 from flask import render_template, url_for, redirect, flash
 from flaskr.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
-from flask import request
+from flask import request, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
@@ -60,91 +60,25 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-@app.route("/calculate", methods=['GET', 'POST'])
+@app.route("/calculatee", methods=['POST'])
+@login_required
+def calculatee():
+    data = request.json
+    motor_vehicle = data.get('motorVehicle', [])
+    motorbike = data.get('motorbike', [])
+    tricycle = data.get('tricycle', [])
+    flight_domestic = data.get('flightDomestic',[])
+    flight_international = data.get('flightInternational')
+    print(data)       
+     
+    return jsonify({'message': 'data received!'})
+
+
+@app.route('/calculate', methods=['GET'])
 @login_required
 def calculate():
-    if request.method == 'POST':
-        labels = []
-        values = []
-        form = request.form.items()
-        for key, value in form:
-
-            if "fuelType"  not  in key and "price" not in key:
-                labels.append(key)
-                values.append(float(value))           
-
-        # Retrieve form data for each vehicle type
-        motor_vehicle = float(request.form['motor_vehicle'])
-        fuel_type = request.form['fuelType']
-        fuel_price = float(request.form['motor_price'])
-        fuel_type_emission_factor = fuel_emmmision_factors.get(fuel_type, 1)  # Get the emission-factor based on fuel type
-        
-        motorbike = float(request.form['motorbike'])
-        fuel_type2 = request.form['fuelType2']
-        motorbike_price = float(request.form['motorbike_price'])
-        fuel_type_emission_factor2 = fuel_emmmision_factors.get(fuel_type2, 1)
-        
-        tricycle = float(request.form['tricycle'])
-        fuel_type3 = request.form['fuelType3']
-        tricycle_price = float(request.form['tricycle_price'])
-        fuel_type_emission_factor3 = fuel_emmmision_factors.get(fuel_type3, 1)
-
-        flight_domestic = float(request.form['flight_domestic'])
-        flight_domestic_price = float(request.form['flight_domestic_price'])
-        domestic_flight_emission_factor = flight_domestic * DOMESTIC_FLIGHT
-
-        flight_international = float(request.form['flight_international'])
-        flight_international_price = float(request.form['flight_international_price'])
-        inter_flight_emission_factor = flight_international * INTERNATIONAL_FLIGHT
-
-        electricity = float(request.form['electricity'])
-        electricity_price = float(request.form['electricity_price'])
-        electricity_emission_factor = electricity * ELECTRICITY
-
-        generator = float(request.form['generator'])
-        fuel_type4 = request.form['fuelType4']
-        generator_price = float(request.form['generator_price'])
-        fuel_type_emission_factor4 = fuel_emmmision_factors.get(fuel_type4, 1)
-
-        lpg = float(request.form['lpg'])
-        lpg_price = float(request.form['lpg_price'])
-        lpg_emission_factor = lpg * LPG
-
-        coal = float(request.form['coal'])
-        coal_price = float(request.form['coal_price'])
-        coal_emission_factor = coal * COAL
-        
-        # Process data for each vehicle type, multiplying by the emission factor
-        motor_vehicle_emission_factor = motor_vehicle * fuel_type_emission_factor
-        motorbike_emission_factor = motorbike * fuel_type_emission_factor2 
-        tricycle_emission_factor = tricycle * fuel_type_emission_factor3 
-        generator_emission_factor = generator * fuel_type_emission_factor4
-        
-        # Calculate total cost
-        total_cost = fuel_price + motorbike_price + tricycle_price + flight_domestic_price + flight_international_price + electricity_price + generator_price + lpg_price + coal_price
-
-         # Calculate total emission factor
-        total_coefficient = (motor_vehicle_emission_factor + motorbike_emission_factor + tricycle_emission_factor + domestic_flight_emission_factor + inter_flight_emission_factor + electricity_emission_factor + generator_emission_factor + lpg_emission_factor + coal_emission_factor) / 1000
-        sum_of_coefficient = [int(motor_vehicle_emission_factor + motorbike_emission_factor + tricycle_emission_factor + domestic_flight_emission_factor + inter_flight_emission_factor), int(electricity_emission_factor + lpg_emission_factor + coal_emission_factor)]
-        list_of_coefficient = [motor_vehicle_emission_factor, motorbike_emission_factor, tricycle_emission_factor, domestic_flight_emission_factor, inter_flight_emission_factor, electricity_emission_factor, generator_emission_factor, lpg_emission_factor, coal_emission_factor]
-        return render_template('calculate.html', 
-                               motor_vehicle_emission_factor=motor_vehicle_emission_factor, 
-                               motorbike_emission_factor=motorbike_emission_factor, 
-                               tricycle_emission_factor=tricycle_emission_factor,
-                               domestic_flight_emission_factor=domestic_flight_emission_factor,
-                               inter_flight_emission_factor=inter_flight_emission_factor,
-                               electricity_emission_factor=electricity_emission_factor,
-                               generator_emission_factor=generator_emission_factor,
-                               lpg_emission_factor=lpg_emission_factor,
-                               coal_emission_factor=coal_emission_factor,
-                               total_coefficient=total_coefficient,
-                               total_cost=total_cost,
-                               labels=json.dumps(labels), 
-                               data=list_of_coefficient,
-                               sum_of_coefficient=sum_of_coefficient
-                               )
-        
     return render_template('calculate.html')
+
 
 @app.route('/account', methods = ['GET', 'POST'])
 @login_required

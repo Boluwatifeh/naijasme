@@ -36,8 +36,8 @@
 
   <h2 class="text-center">Transportation Consumption Form</h2>
   <div class="container">
-    <form action="/calculate" method="post" id="transport-form"> 
-      <div class="form-group row">    
+    <form> 
+      <div class="form-group row" id="motorVehicle">    
         <div class="col">   
           <label for="car_diesel">Motor Vehicle (litres)</label>
           <input type="text" class="form-control" id="motor_vehicle" name="motor_vehicle" >
@@ -54,7 +54,8 @@
           <input type="text" class="form-control" id="motor_price" name="motor_price">
         </div>
       </div>
-      <div class="form-group row">
+      <button type="button" onclick="addInput('motorVehicle')">Add More Motor Vehicles</button>
+      <div class="form-group row" id="motorbike">
         <div class="col">
           <label for="motorbike">Motorbike (litres)</label>
           <input type="text" class="form-control" id="motorbike" name="motorbike">
@@ -71,8 +72,8 @@
           <input type="text" class="form-control" id="motorbike_price" name="motorbike_price">
         </div>
       </div>
-     
-      <div class="form-group row">
+      <button type="button" onclick="addInput('motorbike')">Add More Motorbikes</button>
+      <div class="form-group row" id="tricycle">
         <div class="col">
           <label for="tricycle">Tricycle (litres)</label>
           <input type="text" class="form-control" id="tricycle" name="tricycle">
@@ -89,7 +90,8 @@
           <input type="text" class="form-control" id="tricycle_price" name="tricycle_price">
         </div>
       </div>
-      <div class="form-group row">
+      <button type="button" onclick="addInput('tricycle')">Add More Tricycle</button>
+      <div class="form-group row" id="flightDomestic">
         <div class="col">
           <label for="flight_domestic">Flight (Domestic) (Km Travelled)</label>
           <input type="text" class="form-control" id="flight_domestic" name="flight_domestic">
@@ -99,7 +101,7 @@
           <input type="text" class="form-control" id="flight_domestic_price" name="flight_domestic_price">
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" id="flightInternational">
         <div class="col">
           <label for="flight_international">Flight (International) (Km Travelled)</label>
           <input type="text" class="form-control" id="flight_international" name="flight_international">
@@ -113,7 +115,7 @@
 
       <!-- this is the beginning of the merge -->
       <h2 class="text-center">Enerygy Consumption form </h2>
-      <div class="form-group row">
+      <div class="form-group row" id="electricity">
         <div class="col">
           <label for="electricity">Electricity (kWh)</label>
           <input type="text" class="form-control" id="electricity" name="electricity">
@@ -123,7 +125,7 @@
           <input type="text" class="form-control" id="electricity_price" name="electricity_price">
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" id="generator">
         <div class="col">
           <label for="generator">Generator (litres)</label>
           <input type="text" class="form-control" id="generator" name="generator">
@@ -140,7 +142,8 @@
           <input type="text" class="form-control" id="generator_price" name="generator_price">
         </div>
       </div>
-      <div class="form-group row">
+      <button type="button" onclick="addInput('generator')">Add More Generators</button>
+      <div class="form-group row" id="lpg">
         <div class="col">
           <label for="lpg">LPG (cooking gas) (litres)</label>
           <input type="text" class="form-control" id="lpg" name="lpg">
@@ -150,7 +153,7 @@
           <input type="text" class="form-control" id="lpg_price" name="lpg_price">
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" id="firewood">
         <div class="col">
           <label for="coal">Coal (firewood) (tonnes)</label>
           <input type="text" class="form-control" id="coal" name="coal">
@@ -163,155 +166,78 @@
 
       <!-- this is the end -->
 
-      <button type="submit" class="btn btn-primary">Calculate</button>
+      <button type="submit" class="btn btn-primary" onclick="submitForm(event)">Calculate</button>
     </form>
   </div>
 
-  <div class="container">
-    <h1 class="text-center">Total Consumption Bar Chart</h1>
-    <canvas id="myChart"></canvas>
-  </div>
-
-  <div style="max-width: 600px; margin: auto;" class="container">
-    <h1 class="text-center">Total Consumption Pie Chart</h1>
-    <canvas id="myPieChart"></canvas>
-  </div>
-
-  <div style="max-width: 600px; margin: auto;" class="container">
-    <h1 class="text-center">Consumption Pie Chart</h1>
-    <canvas id="myPieChart2"></canvas>
-  </div>
 
 
-  <div class="container">
-    <h1>Total Footprint = {{ total_coefficient }} metric tons of CO2e </h1>
-    <p><strong> {{ motor_vehicle_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ motorbike_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ tricycle_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ domestic_flight_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ inter_flight_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ electricity_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ generator_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ lpg_coefficient }} metric tons: </strong></p>
-    <p><strong> {{ coal_coefficient }} metric tons:  </strong></p>
-    <p>Total amount spent is {{ total_cost }}</p>
-
-
-  </div>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> 
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const labels = JSON.parse('{{ labels | safe }}');
-      const data = JSON.parse('{{ data | safe }}');
 
-      // Create bar chart
-      const ctx = document.getElementById('myChart').getContext('2d');
-      const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Total Consumption',
-            data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.5)', // Blue color with transparency
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+function addInput(containerId) {
+    var container = document.getElementById(containerId);
+    var newInput = container.cloneNode(true);
+
+    // Append the cloned input fields to the form
+    container.parentNode.insertBefore(newInput, container.nextSibling);
+}
+
+async function submitForm(event) {
+    try {
+
+        event.preventDefault();
+        // Gather form data
+        var formData = {
+            motorVehicle: serializeInputs('motorVehicle'),
+            motorbike: serializeInputs('motorbike'),
+            tricycle: serializeInputs('tricycle'),
+            flightDomestic: serializeInputs('flightDomestic'),
+            flightInternational: serializeInputs('flightInternational'),
+            electricity: serializeInputs('electricity'),
+            generator: serializeInputs('generator'),
+            lpg: serializeInputs('lpg'),
+            firewood: serializeInputs('firewood')
+            // Add more sections as needed for other form fields
+        };
+
+        // Serialize form data to JSON
+        var jsonData = JSON.stringify(formData);
+
+        // Send POST request to Flask backend
+        const response = await fetch('/calculatee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonData
+        });
+
+        // Handle response from Flask backend
+        if (!response.ok) {
+            throw new Error('Failed to send data to server');
         }
-      });
+
+        // Do something with the response if needed
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function serializeInputs(containerId) {
+    var container = document.getElementById(containerId);
+    var inputs = container.querySelectorAll('input, select');
+    var values = {};
+
+    inputs.forEach(input => {
+        values[input.name] = input.value;
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const pie_labels = JSON.parse('{{ labels | safe }}');
-      const pie_data = JSON.parse('{{ data | safe }}');
+    return values;
+}
 
-      // Create pie chart
-      const ctx = document.getElementById('myPieChart').getContext('2d');
-      const myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: pie_labels,
-          datasets: [{
-            label: 'Total Consumption',
-            data: pie_data,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.5)', // Red color with transparency
-              'rgba(54, 162, 235, 0.5)', // Blue color with transparency
-              'rgba(255, 206, 86, 0.5)', // Yellow color with transparency
-              'rgba(75, 192, 192, 0.5)', // Green color with transparency
-              'rgba(153, 102, 255, 0.5)', // Purple color with transparency
-              'rgba(255, 159, 64, 0.5)', // Orange color with transparency
-              'rgba(255, 99, 132, 0.5)', // Red color with transparency (repeat to cover more colors)
-              'rgba(191, 63, 191, 0.6)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)',
-              'rgba(255, 99, 132, 1)',
-              'rgba(191, 63, 191, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    });
- 
-    document.addEventListener('DOMContentLoaded', function () {
-      // const energy_label = JSON.parse('{{ coefficient_label | safe }}');
-      const coeff_data = JSON.parse('{{ sum_of_coefficient | safe }}');
-      console.log(coeff_data)
-      console.log('hi')
-
-      // Create pie chart
-      const ctx = document.getElementById('myPieChart2').getContext('2d');
-      const myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ["Transportation", "Energy"],
-          datasets: [{
-            label: 'Test Consumption',
-            data: coeff_data,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.5)', // Red color with transparency
-              'rgba(54, 162, 235, 0.5)', // Blue color with transparency
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    });
-
-    $(function () { 
+$(function () { 
         $("#datepicker1").datepicker({  
             autoclose: true,  
             todayHighlight: true, 
@@ -319,12 +245,13 @@
           }).datepicker('update', new Date()); 
         }); 
 
-    $(function () { 
-        $("#datepicker2").datepicker({  
-            autoclose: true,  
-            todayHighlight: true, 
-            todayBtn : "linked",  
-        }).datepicker('update', new Date()); 
-    });
+$(function () { 
+    $("#datepicker2").datepicker({  
+        autoclose: true,  
+        todayHighlight: true, 
+        todayBtn : "linked",  
+    }).datepicker('update', new Date()); 
+});
+
   </script>
 {% endblock content %}
