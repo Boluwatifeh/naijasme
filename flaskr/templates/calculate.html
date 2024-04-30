@@ -58,7 +58,7 @@
       <div class="form-group row" id="motorbike">
         <div class="col">
           <label for="motorbike">Motorbike (litres)</label>
-          <input type="text" class="form-control" id="motorbike" name="motorbike">
+          <input type="text" class="form-control" id="motorbike_value" name="motorbike">
         </div>
         <div class="col">
           <label for="fuelType">Select Fuel Type:</label>
@@ -76,7 +76,7 @@
       <div class="form-group row" id="tricycle">
         <div class="col">
           <label for="tricycle">Tricycle (litres)</label>
-          <input type="text" class="form-control" id="tricycle" name="tricycle">
+          <input type="text" class="form-control" id="tricycle_value" name="tricycle">
         </div>
         <div class="col">
           <label for="fuelType">Select Fuel Type:</label>
@@ -94,7 +94,7 @@
       <div class="form-group row" id="flightDomestic">
         <div class="col">
           <label for="flight_domestic">Flight (Domestic) (Km Travelled)</label>
-          <input type="text" class="form-control" id="flight_domestic" name="flight_domestic">
+          <input type="text" class="form-control" id="flightDomestic_value" name="flight_domestic">
         </div>
         <div class="col">
           <label for="flight_domestic_price">Total Cost (Naira)</label>
@@ -104,7 +104,7 @@
       <div class="form-group row" id="flightInternational">
         <div class="col">
           <label for="flight_international">Flight (International) (Km Travelled)</label>
-          <input type="text" class="form-control" id="flight_international" name="flight_international">
+          <input type="text" class="form-control" id="flightInternational_value" name="flight_international">
         </div>
         <div class="col">
           <label for="flight_international_price">Total Cost (Naira)</label>
@@ -118,7 +118,7 @@
       <div class="form-group row" id="electricity">
         <div class="col">
           <label for="electricity">Electricity (kWh)</label>
-          <input type="text" class="form-control" id="electricity" name="electricity">
+          <input type="text" class="form-control" id="electricity_value" name="electricity">
         </div>
         <div class="col">
           <label for="electricity_price">Total Cost (Naira)</label>
@@ -128,7 +128,7 @@
       <div class="form-group row" id="generator">
         <div class="col">
           <label for="generator">Generator (litres)</label>
-          <input type="text" class="form-control" id="generator" name="generator">
+          <input type="text" class="form-control" id="generator_value" name="generator">
         </div>
         <div class="col">
           <label for="fuelType">Select Fuel Type:</label>
@@ -146,7 +146,7 @@
       <div class="form-group row" id="lpg">
         <div class="col">
           <label for="lpg">LPG (cooking gas) (litres)</label>
-          <input type="text" class="form-control" id="lpg" name="lpg">
+          <input type="text" class="form-control" id="lpg_value" name="lpg">
         </div>
         <div class="col">
           <label for="lpg_price">Total Cost (Naira)</label>
@@ -156,11 +156,11 @@
       <div class="form-group row" id="firewood">
         <div class="col">
           <label for="coal">Coal (firewood) (tonnes)</label>
-          <input type="text" class="form-control" id="coal" name="coal">
+          <input type="text" class="form-control" id="firewood_value" name="coal">
         </div>
         <div class="col">
           <label for="coal_price">Total Cost (Naira)</label>
-          <input type="text" class="form-control" id="coal_price" name="coal_price">
+          <input type="text" class="form-control" id="firewood_price" name="coal_price">
         </div>
       </div>
 
@@ -176,37 +176,64 @@
 
   <script>
 
-function addInput(containerId) {
-    var container = document.getElementById(containerId);
-    var newInput = container.cloneNode(true);
+var counter = 0; 
 
-    // Append the cloned input fields to the form
-    container.parentNode.insertBefore(newInput, container.nextSibling);
+function addInput(containerId) {
+    counter++;
+    var newContainerId = containerId + '_' + counter;
+
+    var container = document.getElementById(containerId);
+    var newContainer = container.cloneNode(true);
+
+    newContainer.id = newContainerId;
+    newContainer.querySelectorAll('input, select').forEach(input => {
+        input.id = input.id + '_' + counter;
+        input.value = ''; 
+    });
+    container.parentNode.insertBefore(newContainer, container.nextSibling);
 }
+
 
 async function submitForm(event) {
     try {
-
         event.preventDefault();
-        // Gather form data
+
         var formData = {
-            motorVehicle: serializeInputs('motorVehicle'),
-            motorbike: serializeInputs('motorbike'),
-            tricycle: serializeInputs('tricycle'),
-            flightDomestic: serializeInputs('flightDomestic'),
-            flightInternational: serializeInputs('flightInternational'),
-            electricity: serializeInputs('electricity'),
-            generator: serializeInputs('generator'),
-            lpg: serializeInputs('lpg'),
-            firewood: serializeInputs('firewood')
-            // Add more sections as needed for other form fields
+            motorVehicle: [],
+            motorbike: [],
+            tricycle: [],
+            flightDomestic: [],
+            flightInternational: [],
+            electricity: [],
+            generator: [],
+            lpg: [],
+            firewood: []
         };
 
-        // Serialize form data to JSON
-        var jsonData = JSON.stringify(formData);
+        var formFields = ['motorVehicle', 'motorbike', 'tricycle', 'flightDomestic', 'flightInternational', 'electricity', 'generator', 'lpg', 'firewood'];
+        
+        formFields.forEach(field => {
+            var normalContainers = document.querySelectorAll('#' + field);
+            var dynamicContainers = [];
+            for (var i = 1; i <= counter; i++) {
+                var container = document.getElementById(field + '_' + i);
+                if (container) {
+                    dynamicContainers.push(container);
+                }
+            }
+            var allContainers = [...normalContainers, ...dynamicContainers];
 
-        // Send POST request to Flask backend
-        const response = await fetch('/calculatee', {
+
+            allContainers.forEach(container => {
+                var inputs = serializeInputs(container.id);
+                formData[field].push(...inputs);
+            });
+        });
+
+        var jsonData = JSON.stringify(formData);
+        console.log(formData)
+
+        const response = await fetch('/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -214,12 +241,9 @@ async function submitForm(event) {
             body: jsonData
         });
 
-        // Handle response from Flask backend
         if (!response.ok) {
             throw new Error('Failed to send data to server');
         }
-
-        // Do something with the response if needed
     } catch (error) {
         console.error('Error:', error);
     }
@@ -228,22 +252,26 @@ async function submitForm(event) {
 function serializeInputs(containerId) {
     var container = document.getElementById(containerId);
     var inputs = container.querySelectorAll('input, select');
-    var values = {};
+    var values = [];
 
     inputs.forEach(input => {
-        values[input.name] = input.value;
+        var inputValues = {
+            id: input.id,
+            value: input.value
+        };
+        values.push(inputValues);
     });
 
     return values;
 }
 
 $(function () { 
-        $("#datepicker1").datepicker({  
-            autoclose: true,  
-            todayHighlight: true, 
-            todayBtn : "linked",  
-          }).datepicker('update', new Date()); 
-        }); 
+    $("#datepicker1").datepicker({  
+        autoclose: true,  
+        todayHighlight: true, 
+        todayBtn : "linked",  
+    }).datepicker('update', new Date()); 
+}); 
 
 $(function () { 
     $("#datepicker2").datepicker({  

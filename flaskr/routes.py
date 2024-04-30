@@ -60,17 +60,19 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-@app.route("/calculatee", methods=['POST'])
+@app.route("/submit", methods=['POST'])
 @login_required
-def calculatee():
+def submit():
     data = request.json
     motor_vehicle = data.get('motorVehicle', [])
     motorbike = data.get('motorbike', [])
     tricycle = data.get('tricycle', [])
     flight_domestic = data.get('flightDomestic',[])
     flight_international = data.get('flightInternational')
-    print(data)       
-     
+    # print('motor vehicle: ', motor_vehicle)    
+    # print('motorbike: ', motorbike)
+    # print('tricycle: ', tricycle)
+    # print('flight domestic: ', flight_domestic)   
     return jsonify({'message': 'data received!'})
 
 
