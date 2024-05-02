@@ -20,7 +20,7 @@ fuel_emmmision_factors = {
 
 @app.route("/")
 def home():
-    return render_template('home.html', title=home)
+    return render_template('home.html', title="Home")
 
 @app.route("/about")
 def about():
@@ -79,7 +79,7 @@ def submit():
 @app.route('/calculate', methods=['GET'])
 @login_required
 def calculate():
-    return render_template('calculate.html')
+    return render_template('calculate.html', title="Calculate")
 
 
 @app.route('/account', methods = ['GET', 'POST'])
@@ -96,7 +96,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', image_file=image_file, form=form)
+    return render_template('account.html', image_file=image_file, form=form, title="Account")
 
 def send_reset_mail(user):
     token = user.get_reset_token()
